@@ -1,0 +1,19 @@
+name: weixinapp
+version: 1
+libraries:
+- name: webpy 
+  version: "0.36"
+
+- name: lxml
+  version: "2.3.4"
+  
+- name: PyCrypto
+  version: "2.6"
+  
+cron:
+- url: /cron/update
+  schedule: "*/10 * * * *"
+  description: "每10分钟执行一次查询发送邮件任务"
+- url: /cron/kvbackup
+  schedule: "0 3 * * *"
+  description: "每天凌晨3点备份数据"
