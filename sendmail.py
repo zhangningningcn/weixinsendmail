@@ -15,7 +15,7 @@ except ImportError:
 
 ChenseToNumber ={u"一":u"1",u"二":u"2",u"两":u"2",u"三":u"3",u"四":u"4",u"五":u"5",u"六":u"6",u"七":u"7",u"八":u"8",u"九":u"9",u"零":u"0"}
 ChenseData ={u"年":0,u"月":1,u"日":2,u"号":2,u"时":3,u"点":3,u":":3,u"：":3,u"分":4}
-TimeSegment ={u"早上":[0,8],u"上午":[0,8],u"中午":[3,12],u"下午":[2,14],u"晚上":[2,19],u"今晚":[2,19],u"凌晨":[0,0],u"傍晚":[2,17],u"明天":[0,24],u"明晚":[2,24],u"后天":[0,48]}
+TimeSegment ={u"早上":[0,8],u"上午":[0,8],u"中午":[3,12],u"下午":[2,14],u"晚上":[2,19],u"今晚":[2,19],u"凌晨":[0,0],u"今天":[0,0],u"傍晚":[2,17],u"明天":[0,24],u"明晚":[2,24],u"后天":[0,48]}
 
 def strToDateTime( instr ):
 
@@ -363,7 +363,7 @@ def sendMail():
     for data in datalist:
         mail = data["mail"]
         send_mail(mail, u"事件提醒", data["Matter"],\
-          ("smtp.sina.com", 25, "nnzyserver@sina.com", config.passwdmail, False))
+          (config.smtpaddr, 25, config.emailaddr, config.passwdmail, False))
         datas.delete("sendmail.json",{"ID":['=',data["ID"]]})
 def deleteMail(s,user,state):
     rets = ""

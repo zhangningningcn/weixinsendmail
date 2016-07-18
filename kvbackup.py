@@ -54,6 +54,9 @@ class KVBackUp():
         # return None
 
 def FindKVDBKeys():
+    """
+    搜索kvdb key
+    """
     datas = set()
     filenames = os.listdir(".")
     for name in filenames:
@@ -69,6 +72,9 @@ def FindKVDBKeys():
                         datas.add(m.group(1))
     return datas
 def WriteZipFile(filename):
+    """
+    保存所有kvdb数据，压缩成zip然后aes cbc加密
+    """
     FileBuffer = io.BytesIO()
     datalist = FindKVDBKeys()
     if datalist:
@@ -96,6 +102,10 @@ def WriteZipFile(filename):
         FileBuffer.close()
 def ReadZipFile(filename):
 
+    """
+    从storage中读取数据，还原到kvdb中
+    参数 filename 要还原数据的文件名
+    """
     bucket = Bucket('backup')
     # print(filename)
     CryptData = bucket.get_object_contents(filename)
@@ -118,6 +128,9 @@ def ReadZipFile(filename):
         
 def MakeBackup():
 
+    """
+    定时备份文件任务
+    """
     dbchgcounter = kv.get("kvdbchg")
     if dbchgcounter == None:
         dbchgcounter = 0

@@ -32,7 +32,7 @@ class WeixinInterface():
         except:
             return
         #自己的token
-        token="90e053208b2083c4f48b20506a20a16c" #这里改写你在微信公众平台里输入的token
+        token=config.weixintoken #这里改写你在微信公众平台里输入的token
         #字典序排序
         list=[token,timestamp,nonce]
         list.sort()

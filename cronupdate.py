@@ -1,4 +1,6 @@
-
+"""
+cron调用此文件，检查是否有需要发送的邮件
+"""
 import web
 import sendmail
 web.config.debug = True  
