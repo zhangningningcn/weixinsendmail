@@ -1,9 +1,7 @@
-/test.json
-/sesion.json
-/复件 test.json
+/*.json
 /__pycache__
 /expresslest.json
-/cmd.bat
+/*.bat
 /*.pyc
 /*.json
 /*.wsgic

@@ -363,7 +363,7 @@ def sendMail():
     for data in datalist:
         mail = data["mail"]
         send_mail(mail, u"事件提醒", data["Matter"],\
-          (config.smtpaddr, 25, config.emailaddr, config.passwdmail, False))
+          (config.smtpaddr, config.smtpport, config.emailaddr, config.passwdmail, False))
         datas.delete("sendmail.json",{"ID":['=',data["ID"]]})
 def deleteMail(s,user,state):
     rets = ""
