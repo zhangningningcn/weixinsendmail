@@ -54,6 +54,8 @@ class WeixinInterface():
         sret = ""
         if msgType == "text":
             content=xml.find("Content").text#获得用户所输入的内容
+            if not content:
+                return self.render.reply_text(fromUser,toUser,int(time.time()),u"无法解析重新输入")
             now = time.time()
             ss = datas.select("sesion.json",{"User":['=',fromUser]})
             state = 0
@@ -65,17 +67,21 @@ class WeixinInterface():
                 msgsplit = [ss[0]["App"],content]
             else:
                 msgsplit = content.split(None,1)
+            if not msgsplit:
+                return self.render.reply_text(fromUser,toUser,int(time.time()),u"无法解析重新输入")
             if msgsplit[0] in self.comands:
                 if len(msgsplit) == 1:
                     msgsplit.append("-l")
                 sret = self.comands[msgsplit[0]](msgsplit[1],fromUser,state)
             else:
                 #sret = u"暂时不支持\""+msgsplit[0]+u"\"命令"
+                if len(msgsplit) < 2:
+                    return self.render.reply_text(fromUser,toUser,int(time.time()),u"无法解析重新输入")
                 sret = sendmail.saveMailData(content,fromUser,3)
         elif msgType == "event":
             content=xml.find("Event").text#获得Event
             if content == "subscribe":#(订阅)
-                sret = u"欢迎关注《宁静致远自强不息》微信公众号。回复 help 获取帮助"
+                sret = config.welcome
             elif content == "unsubscribe":#(取消订阅)
                 datas.delete("userinfo.json",{"User":["=",fromUser]})
         elif msgType == "image":

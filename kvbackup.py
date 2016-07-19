@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
+#本文件使用两个kvdb变量：kvdbchg,kvdatastamp 不是 json 结尾的
+
+
 import os,io,os.path
-import re,json,zipfile
+import re,json,zipfile,hashlib
 import web
 from Crypto.Cipher import AES
 from Crypto import Random
+
 
 try:
     import config
@@ -18,6 +22,7 @@ import sae.kvdb
 kv = sae.kvdb.Client()
 from sae.storage import Bucket
 from datetime import datetime
+import time
 
 class KVBackUp():
     
@@ -34,6 +39,15 @@ class KVBackUp():
             return u"请求格式不正确"
         if "type" in js.keys():
             if "filename" in js.keys():
+                stamp = kv.get("kvdatastamp")
+                sha1=hashlib.sha1()
+                sha1.update(stamp)
+                sha1.update(config.keyUserRestore)
+                hashcode=sha1.hexdigest()
+                if not "hashcode" in js.keys():
+                    return u"请求类型不正确"
+                if hashcode != js["hashcode"]:
+                    return u"验证失败"
                 if js["type"] == "restore":
                     return ReadZipFile(js["filename"])
                 elif js["type"] == "getfile":
@@ -42,6 +56,9 @@ class KVBackUp():
                     return u"请求类型不正确"
             elif js["type"] == "getfilelist":
                 filelist = []
+                stamp = str(int(time.time()))
+                filelist.append(stamp)
+                kv.set("kvdatastamp",stamp)
                 for finf in bucket.list():
                     filelist.append(str(finf[u'name']))
                 return ",".join(filelist)
@@ -84,7 +101,7 @@ def WriteZipFile(filename):
             bytedata = kv.get(str(data))
             if bytedata:
                 # print(bytedata)
-                zfile.writestr(data,bytedata)
+                zfile.writestr(str(data),bytedata)
         zfile.close() 
         key = config.keyDataBackUp
         iv = Random.new().read(AES.block_size)
@@ -125,6 +142,7 @@ def ReadZipFile(filename):
         bytedata = zfile.read(name)
         kv.set(name,bytedata.decode("utf-8"))
         
+    return u"数据已还原"
         
 def MakeBackup():
 

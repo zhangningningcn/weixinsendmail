@@ -25,6 +25,7 @@ def strToDateTime( instr ):
     instrlen = len(instr)
     strindex = 0
     issettime = False
+    unitindata = False
     #print(today)
     
     NextTimeperiod = 0
@@ -189,6 +190,7 @@ def strToDateTime( instr ):
             break
         elif word in ChenseData.keys():
             lastdataindex = ChenseData[word]
+            unitindata = True
             #print(word)
             try:
                 TimeIn[lastdataindex] = int(number)
@@ -272,7 +274,7 @@ def strToDateTime( instr ):
         
     strindex += 1
         
-    if number != u'':
+    if number != u'' and unitindata:
         try:
             TimeIn[lastdataindex+1] = int(number)
         except ValueError:
@@ -337,11 +339,15 @@ def saveMailData(s,user,state):
         return u"您的邮箱没设置"
         
     m,t = strToDateTime(s)
+    now = datetime.now()
     if m < 0:
         return u"Error "+t+u" 时间解析错误"
-    if t < datetime.now():
+    if t < now:
         return u"设置时间早于当前时间，设置无效"
     s = s[m:]
+    print len(s)
+    if len(s) == 0:
+        return u"您没有写事件，或者发送格式有误"
     tm = (t - datetime(1970,1,1,8,0,0)).total_seconds() #8时区
     data_id = datas.select("sendmail_id.json",{"User":['=',user]})
     if data_id:
@@ -353,7 +359,7 @@ def saveMailData(s,user,state):
     data = {"User":user,"Time":tm,"Matter":s,"ID":data_id,"mail":mail}
     datas.insert("sendmail.json",data)
     datas.insert("sendmail_id.json",{"User":user,"ID":data_id},"User")
-    if t.hour < 6:
+    if now.hour < 6:
         s += u"\n现在是凌晨，请确认您的时间设置没错"
     return t.strftime(u"%Y-%m-%d %H:%M")+u"发邮件到" +mail+u"提醒您："+s
     
