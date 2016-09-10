@@ -310,12 +310,16 @@ def saveMailData(s,user,state):
     系统每10分钟执行一次，只有整10分钟会发邮件，比如8:00,8:10等等
     不写命令，默认按mail解析。此命令也可以省去mail直接写:“时间 事件”(不包括引号)
     
+    格式：mail now 事件
+    立即发送邮件
+    
     格式：mail -d n1 n2 ...
     删除序号对应的mail事件。
     不带序号时列出mail列表。列出列表后发送序号可删除对应mail事件
     
     格式：mail
     列出所有发送邮件事件。此时发序号不可以删除对应mail事件
+    
     """
     s = s.strip()
     if state != 3:
@@ -323,6 +327,17 @@ def saveMailData(s,user,state):
             datas.delete("sesion.json",{"User":['=',user]})
         elif s == u'-l':
             return listMail(s,user)
+        elif s[0:4] == u'now ':
+            userinfo = datas.select("userinfo.json",{"User":['=',user]})
+            if not userinfo:
+                return u"您的邮箱没设置"
+            if "mail" in userinfo[0]:
+                mail = userinfo[0]["mail"]
+            else:
+                return u"您的邮箱没设置"
+            send_mail(mail, u"事件提醒", s[4:],\
+              (config.smtpaddr, config.smtpport, config.emailaddr, config.passwdmail, False))
+            return u"邮件已发送"
         elif s == u'-d' or state != 0:
             return deleteMail(s,user,state)
         elif s[0:2] == u'-d':
