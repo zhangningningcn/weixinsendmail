@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import os,sys,io
-import json,time,hashlib
+import json,time,hashlib,random
 import web,lxml
 from lxml import etree
 import datas,sendmail
 #import setmail
 from datetime import datetime
 
-web.config.debug = True  
+web.config.debug = False  
 
 
 class WeixinInterface():
@@ -24,13 +24,13 @@ class WeixinInterface():
     def GET(self):
         #获取输入参数
         data = web.input()
-        signature=data.signature
-        timestamp=data.timestamp
-        nonce=data.nonce
         try:
+            signature=data.signature
+            timestamp=data.timestamp
+            nonce=data.nonce
             echostr=data.echostr
         except:
-            return
+            return u"你是谁？"
         #自己的token
         token=config.weixintoken #这里改写你在微信公众平台里输入的token
         #字典序排序
@@ -108,6 +108,26 @@ class Myfile:
             raise TypeError
     def getvalue(self):
         return self.s
+def web_cmd(s,user,state):
+    webinfo = datas.select("webinfo.json",{"User":["=",user]})
+    if not "token" in webinfo:
+        return u"请先设置webtoken"
+    cmdtime = int(time.time())
+    ran = random.randrange(100000000)
+    datas.insert("webcmd.json",{"User":user,"cmdstr":s,"cmdtime":cmdtime,"ran":str(ran)})
+    return u"命令已保存"
+
+def webtoken(s,user,state):
+    if s:
+        datas.insert("webinfo.json",{"User":user,"token":s},"User")
+    else:
+        webinfo = datas.select("webinfo.json",{"User":["=",user]})
+        if not "token" in webinfo:
+            return u"您没有设置webtoken"
+        else:
+            return webinfo["token"]
+        
+
 def setmail(s,user,state):
     """
     格式：setmail name@serveraddr

@@ -23,11 +23,13 @@ import web
 from weixinapp import WeixinInterface
 from cronupdate import CronUpdate
 from kvbackup import KVBackUp
+from webcmd import WebCmd
 
 urls = (
 '/weixin','WeixinInterface',
 '/cron/update','CronUpdate',
 '/cron/kvbackup','KVBackUp'
+'/webcmd','WebCmd'
 )
 
 app_root = os.path.dirname(__file__)

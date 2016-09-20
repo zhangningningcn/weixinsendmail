@@ -9,9 +9,10 @@
 * kvbackup.py   kvdb数据备份
 * sendmail.py   时间解析，添加删除邮件列表，发送邮件等
 * weixinapp.py  微信平台数据处理
+* webcmd.py     自动关机
 * tool/
 *     backup.py  备份数据测试和还原数据脚本
 *     connect.py 本地发送微信平台格式数据
-
+*     shutdownweb.py 本地计算机关机定时查询
 
 

@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 import json
 import web
-web.config.debug = True  
+web.config.debug = False  
 
 _DEBUG_ = False
 
@@ -77,6 +77,8 @@ def select(filename,where):
     for d in js:
         # try:
             for k,v in wpairs:
+                if k not in d:
+                    break
                 if not datecheck(d[k],v):
                     #if d[k] != v:
                     break
@@ -131,6 +133,8 @@ def update(filename,data,where):
         for d in js:
             try:
                 for k,v in wpairs:
+                    if k not in d:
+                        break
                     if not datecheck(d[k],v):
                     # if d[k] != v:
                         break
@@ -244,6 +248,8 @@ def delete(filename,where=None):
         while index < jslen:
             d = js[index]
             for k,v in dpairs:
+                if k not in d:
+                    break
                 if not datecheck(d[k],v):
                 #if d[k] != v:
                     break
